@@ -55,7 +55,7 @@ Qualitative comparisons from the paper on **SAR2Opt** and **SEN1-2**. Click each
 
 </details>
 
-This repository provides training, inference, and image-quality evaluation code. Datasets and trained DOGAN checkpoints are not included.
+This repository provides training, inference, and image-quality evaluation code.
 
 ## Setup
 
@@ -127,3 +127,5 @@ Copy the entry below into your LaTeX bibliography, or download [DOGAN.bib](DOGAN
 ## Acknowledgments
 
 The implementation builds on [Parallel-GAN](https://doi.org/10.1109/TGRS.2022.3200996), [CycleGAN and pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix), and [DINOv2](https://github.com/facebookresearch/dinov2). See the upstream projects for their terms and notices.
+
+We thank the authors for making their code publicly available.
