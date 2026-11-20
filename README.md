@@ -11,14 +11,14 @@ Jingfei He<sup>†</sup>, Liang Chen<sup>†</sup>, Hao Shi, Yuhang Chen, Jingyi
 <sub>† Equal contribution</sub>
 
 [![Paper](https://img.shields.io/badge/IEEE_TGRS-Paper-00629B)](https://doi.org/10.1109/TGRS.2025.3606979)
-[![Python](https://img.shields.io/badge/Python-3.10-3776AB?logo=python&logoColor=white)](#setup)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.1-EE4C2C?logo=pytorch&logoColor=white)](#setup)
+[![Python](https://img.shields.io/badge/Python-3.10-3776AB?logo=python&logoColor=white)](#-setup)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.1-EE4C2C?logo=pytorch&logoColor=white)](#-setup)
 
-[Overview](#overview) · [Visual Results](#visual-results) · [Setup](#setup) · [Training & Inference](#data-and-commands) · [Evaluation](#evaluation) · [Citation](#citation)
+[Overview](#-overview) · [Visual Results](#-visual-results) · [Setup](#-setup) · [Training & Inference](#data-and-commands) · [Evaluation](#-evaluation) · [Citation](#-citation)
 
 </div>
 
-## Overview
+## 🔍 Overview
 
 **DOGAN transfers optical priors from a pretrained DINO model into a SAR-to-optical translation GAN.** During training, a frozen DINO backbone and lightweight adapters provide multiscale optical features that guide the generator through domain alignment. At inference, the trained generator translates SAR images into optical-like images.
 
@@ -40,7 +40,7 @@ Jingfei He<sup>†</sup>, Liang Chen<sup>†</sup>, Hao Shi, Yuhang Chen, Jingyi
 
 **Inference framework.** The generator performs SAR-to-optical translation without the optical-prior extraction branch.
 
-## Visual Results
+## 🖼️ Visual Results
 
 Qualitative comparisons from the paper on **SAR2Opt** and **SEN1-2**. Click each figure to inspect the original resolution. These are the paper's results, not outputs of a new run of this release.
 
@@ -57,7 +57,7 @@ Qualitative comparisons from the paper on **SAR2Opt** and **SEN1-2**. Click each
 
 This repository provides training, inference, and image-quality evaluation code.
 
-## Setup
+## 🛠️ Setup
 
 Use Python 3.10. Install PyTorch 2.1 and torchvision 0.16 for your CUDA version, then run:
 
@@ -87,7 +87,7 @@ python scripts/run_dogan.py --mode test --dataroot /path/to/paired_dataset
 
 Run from the repository root. By default, training uses 256-pixel crops and testing processes all pairs in the supplied test folders. Use `--num_test` to set an optional test limit. To use the 512-pixel preprocessing profile, pass `--config configs/crop512.json` to both commands and use the corresponding `DOGAN_512` checkpoint and output folders.
 
-## Evaluation
+## 📊 Evaluation
 
 Inference writes images under `results/DOGAN/test_200/images/`. Run the six paper image-quality metrics separately:
 
@@ -101,7 +101,7 @@ The evaluator matches GT and predictions by stem after removing `_fake_B` from t
 
 The evaluator reports PSNR, SSIM, CW-SSIM, RMSE, LPIPS and SAM. PSNR defaults to the legacy PIL luminance convention. Select `--psnr-color rgb` to measure RGB PSNR. SSIM and RMSE operate on RGB at an intensity range of 0–255. CW-SSIM uses pyssim 0.7. LPIPS uses AlexNet with spatial averaging, and SAM uses the legacy image-similarity-measures implementation. Resizing applies to all six metrics when requested. Scores on historical splits depend on the exact files, preprocessing and checkpoint used.
 
-## Citation
+## 📖 Citation
 
 If you use DOGAN in your research, please cite our paper:
 
