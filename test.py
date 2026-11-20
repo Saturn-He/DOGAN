@@ -1,4 +1,4 @@
-"""General-purpose test script for SAR-to-Optical Image Translation With Hierarchical Latent Features.
+"""Run DOGAN inference and save translated images with an HTML index.
 Once you have trained your model with train.py, you can use this script to test the model.
 It will load a saved model from '--checkpoints_dir' and save the results to '--results_dir'.
 
@@ -16,10 +16,6 @@ from models import create_model
 from util.visualizer import save_images
 from util import html
 import numpy as np
-# from metric.psnr_ssim import SSIMs_PSNRs
-# from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-# from metric.inception import InceptionV3
-# from metric.fid_kid import compute_FID
 
 
 sumofss = 0
@@ -65,25 +61,3 @@ if __name__ == '__main__':
         save_images(opt, webpage, visuals, img_path, aspect_ratio=opt.aspect_ratio, width=opt.display_winsize)
         processed += batch_len
     webpage.save()  # save the HTML
-
-    # dir_result = os.path.join(opt.dataroot, 'images')
-    # if not os.path.isdir(opt.results_dir):
-    #     os.makedirs(opt.results_dir)
-
-    # dir_testB =  os.path.join(opt.dataroot, 'testB')
-    # #  删除_fake_B
-    # remove_fake_B_from_filenames(dir_result)
-    #
-    # # S1转S2
-    # S1toS2(dir_result)
-
-    #compute SSIM and PSNR
-    # SSIM_measures, PSNR_measures, cw_SSIM_measures,LPIPS_measures = SSIMs_PSNRs(opt.dataroot)
-    # print("SSIM on {0} samples".format(len(SSIM_measures)))
-    # print("Mean: {0} std: {1}".format(np.mean(SSIM_measures), np.std(SSIM_measures)))
-    # print("MAX: {0} MIN: {1}".format(np.max(SSIM_measures), np.min(SSIM_measures)))
-    # print("PSNR on {0} samples".format(len(PSNR_measures)))
-    # print("Mean: {0} std: {1}".format(np.mean(PSNR_measures), np.std(PSNR_measures)))
-    # print("MAX: {0} MIN: {1}".format(np.max(PSNR_measures), np.min(PSNR_measures)))
-    # print("CW-SSIM on {0} samples".format(len(cw_SSIM_measures)))
- 

@@ -24,7 +24,6 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--save_latest_freq', type=int, default=5000, help='frequency of saving the latest results')
         parser.add_argument('--save_epoch_freq', type=int, default=20, help='frequency of saving checkpoints at the end of epochs')
         parser.add_argument('--save_by_iter', action='store_true', help='whether saves model by iteration')
-#        parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
         parser.add_argument('--continue_train', action='store_true', help='continue training from --epoch')
         parser.add_argument('--epoch_count', type=int, default=1, help='the starting epoch count, we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>, ...')
         parser.add_argument('--phase', type=str, default='train', help='train, val, test, etc.')
@@ -39,7 +38,6 @@ class TrainOptions(BaseOptions):
         parser.add_argument('--lr_policy', type=str, default='linear', help='learning rate policy. [linear | step | plateau | cosine]')
         parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
 
-        # 添加命令行参数
         parser.add_argument('--df_dim', type=int, default=384, help='Discriminator feature dimension')
         parser.add_argument('--d_depth', type=int, default=3, help='Discriminator depth')
         parser.add_argument('--patch_size', type=int, default=16, help='Patch size')

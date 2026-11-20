@@ -10,8 +10,8 @@ import torch
 class AlignedDataset(BaseDataset):
     """A dataset class for paired image dataset.
 
-    It assumes that the directory '/path/to/data/train' contains image pairs in the form of {A,B}.
-    During test time, you need to prepare a directory '/path/to/data/test'.
+    Read SAR and optical pairs from trainA/trainB or testA/testB
+    under the configured dataset root.
     """
 
     def __init__(self, opt):
@@ -23,8 +23,6 @@ class AlignedDataset(BaseDataset):
         BaseDataset.__init__(self, opt)
         self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')
         self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')
-        # self.dir_A = os.path.join(opt.dataroot, opt.phase)
-        # self.dir_B = os.path.join(opt.dataroot, opt.phase)
         self.A_paths = sorted(make_dataset(self.dir_A))
         self.B_paths = sorted(make_dataset(self.dir_B))
         if not self.A_paths or len(self.A_paths) != len(self.B_paths):
@@ -59,19 +57,6 @@ class AlignedDataset(BaseDataset):
         A_path = self.A_paths[index]
         B_path = self.B_paths[index]
 
-        # A_img = cv.imread(A_path).transpose(2, 0, 1) / 255.0  # optical
-        # B_img = cv.imread(B_path, cv.IMREAD_LOAD_GDAL).transpose(2, 0, 1)/100  # SAR, using for spacenet with 4-channel SAR
-        # B_img = cv.imread(B_path).transpose(2, 0, 1)/255.0 # SAR, using for dataset with 1/3-channel SAR
-
-        # A_img, B_img = self.center_crop(A_img, B_img, 512)  # for spacenet dataset
-        # A = torch.from_numpy(A_img.astype(np.float32))
-        # B = torch.from_numpy(B_img.astype(np.float32))
-
-        # try:
-        #     with Image.open(A_path) as A:
-        #         A.verify()  # 验证图像有效性
-        # except (OSError, IOError):
-        #     print(f"损坏的图像: {A_path}")
         with Image.open(A_path) as image:
             A = image.convert('RGB')
         with Image.open(B_path) as image:

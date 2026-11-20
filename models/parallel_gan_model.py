@@ -54,7 +54,6 @@ class ParallelGANModel(BaseModel):
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
         if opt.net == 'translation':
             self.loss_names = ['G_GAN', 'D_real', 'D_fake', 'feature', 'G_L1', 'MMD']
-            # self.loss_names = ['G_GAN', 'D_real', 'D_fake', 'feature', 'G_L1']
             if self.isTrain:
                 self.recon_net = networks.define_recon_net(opt.dino_checkpoint).to(device=self.device)
                 # Alias the trainable adapters for checkpointing; DINO stays frozen.
@@ -62,10 +61,6 @@ class ParallelGANModel(BaseModel):
                 self.model_names.append('Adapter')
                 if self.gpu_ids:
                     self.recon_net = torch.nn.DataParallel(self.recon_net, device_ids=opt.gpu_ids, output_device=opt.gpu_ids[0])
-            # state_dict = torch.load(load_path, map_location=str(self.device))
-            # if hasattr(state_dict, '_metadata'):
-            #     del state_dict._metadata
-            # self.recon_net.load_state_dict(state_dict)
         elif opt.net == 'reconstruction':
             self.loss_names = ['G_GAN', 'D_real', 'D_fake', 'recon_VGG', 'G_L1']
 
@@ -81,32 +76,14 @@ class ParallelGANModel(BaseModel):
                     nn.init.xavier_uniform(m.weight.data, 1.)
                 else:
                     raise NotImplementedError('{} unknown inital type'.format(opt.weight_init_type))
-            #         elif classname.find('Linear') != -1:
-            #             if args.init_type == 'normal':
-            #                 nn.init.normal_(m.weight.data, 0.0, 0.02)
-            #             elif args.init_type == 'orth':
-            #                 nn.init.orthogonal_(m.weight.data)
-            #             elif args.init_type == 'xavier_uniform':
-            #                 nn.init.xavier_uniform(m.weight.data, 1.)
-            #             else:
-            #                 raise NotImplementedError('{} unknown inital type'.format(args.init_type))
             elif classname.find('BatchNorm2d') != -1:
                 nn.init.normal_(m.weight.data, 1.0, 0.02)
                 nn.init.constant_(m.bias.data, 0.0)
         # define networks (both generator and discriminator)
         self.netG = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf, opt.netG, opt.norm, not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids, opt.net)
-        # self.netG = UViT()
-        # self.netG = SymmetricViT(self.opt)
-        # print(self.netG)
-        # self.netD = networks.define_D(opt.input_nc + opt.output_nc, opt.ndf, opt.netD,
-        #                               opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids)
         if self.isTrain:  # define a discriminator; conditional GANs need to take both input and output images; Therefore, #channels for D is input_nc + output_nc
-            # self.netD = Discriminator(args=opt)
-            # self.netD.eval()
-            # self.netD.apply(weights_init)
             self.netD = networks.define_D(opt.input_nc + opt.output_nc, opt.ndf, opt.netD,
                                       opt.n_layers_D, opt.norm, opt.init_type, opt.init_gain, self.gpu_ids)
-            # self.loss_D = 0
 
         if self.isTrain:
             # define loss functions
@@ -199,14 +176,10 @@ class ParallelGANModel(BaseModel):
         if self.opt.net == 'reconstruction':
             self.fake_B, self.trans_feature = self.netG(self.real_B)
         elif self.opt.net == 'translation':
-            # self.fake_B, self.trans_feature = self.netG(self.real_A)
             self.trans_feature = self.netG(self.real_A)
             self.fake_B = self.trans_feature[-1]
             self.trans_feature_selected_5 = [self.trans_feature[i] for i in [0, 1, 2, 3, 5]]  # CLIP
-            # self.trans_feature_selected_5 = [self.trans_feature[i] for i in [0, 2, 4, 6, 8, 10]]    #DINOv2
-            # self.fake_B = self.trans_feature[-1]
             if self.isTrain:
-                # self.recon_feature = [self.recon_net(self.real_B)[i] for i in [5, 4, 3, 2, 0]]   #CLIP_ViT
                 recon_features = self.recon_net(self.real_B)
                 self.recon_feature = [recon_features[i] for i in [4, 3, 2, 1, 0]]
 
@@ -222,17 +195,6 @@ class ParallelGANModel(BaseModel):
         self.loss_D_real = self.criterionGAN(pred_real, True)
         # combine loss and calculate gradients
         self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
-        # self.real_validity = self.netD(self.real_B.detach()).view(-1)
-        # self.fake_validity = self.netD(self.fake_B.detach()).view(-1)  # `detach()` 只在 D 这里使用
-
-        # real_label = torch.ones_like(self.real_validity, dtype=torch.float, device=self.real_B.device)
-        # fake_label = torch.zeros_like(self.fake_validity, dtype=torch.float, device=self.fake_B.device)
-        #
-        # criterion = nn.BCEWithLogitsLoss()
-        # self.loss_D_real = criterion(self.real_validity, real_label)
-        # self.loss_D_fake = criterion(self.fake_validity, fake_label)
-        #
-        # self.loss_D = 0.5 * (self.loss_D_real + self.loss_D_fake)
         self.loss_D.backward(retain_graph=True)  # 保留计算图，避免 G 反向传播时报错
 
     def backward_G(self):
@@ -240,23 +202,16 @@ class ParallelGANModel(BaseModel):
         # First, G(A) should fake the discriminator
         fake_AB = torch.cat((self.real_A, self.fake_B), 1)
         pred_fake = self.netD(fake_AB)
-        # pred_fake = self.netD(self.fake_B.detach()).view(-1)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
         self.loss_feature = 0
         self.loss_MMD = 0
         self.weight = [1/64, 1/32, 1/16, 1/8, 1/4, 1/2]
         self.loss_G_L1 = self.criterionL1(self.fake_B, self.real_B) * self.opt.lambda_L1
         if self.opt.net == 'translation':
-            # self.loss_MMD = self.criterionMMD(self.recon_feature[0], self.trans_feature[0]) * 0.1   # layer 0
-            # for i in range(len(self.trans_feature)-1)[1:]: # layer 1-5
-            # norm_clip_l2, norm_trans_l2 = self.normalize_features(self.recon_feature, self.trans_feature_selected_5, norm_type='batch')
             for i in range(len(self.trans_feature_selected_5)):
                 self.loss_feature += self.criterionL1(self.trans_feature_selected_5[i], self.recon_feature[i]) * self.weight[i-1] * 10 # 10
                 self.loss_MMD += self.criterionMMD( self.recon_feature[i], self.trans_feature_selected_5[i]) * 0.1
-                # self.loss_feature += self.criterionL1(norm_trans_l2[i], norm_clip_l2[i]) * self.weight[i-1] * 10 # 10
-                # self.loss_MMD += self.criterionMMD(norm_trans_l2[i], norm_clip_l2[i]) * 0.1
             self.loss_G = self.loss_G_GAN + self.loss_G_L1 + self.loss_feature + self.loss_MMD
-            # self.loss_G = self.loss_G_GAN + self.loss_G_L1 + self.loss_feature
         elif self.opt.net == 'reconstruction':
             self.loss_recon_VGG = self.criterionVGG(self.fake_B, self.real_B) * 10
             self.loss_G = self.loss_G_GAN + self.loss_G_L1 + self.loss_recon_VGG

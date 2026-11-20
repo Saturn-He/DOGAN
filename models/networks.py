@@ -166,17 +166,7 @@ def define_G(input_nc, output_nc, ngf, netG, norm='batch', use_dropout=False, in
 
 def define_recon_net(pretrained_path=None):
     net = None
-    # net = Resrecon()
-    # net = CLIP_res_FeatureExtractor()
-    # net = CLIP_ViT_B16_FeatureExtractor()
-    # net = CLIP_L14_FeatureExtractor()
-    # net = DINO_res_FeatureExtractor()
     net = DINO_ViT_S16_FeatureExtractor(pretrained_path=pretrained_path)
-    # net = DINO_ViT_B16_FeatureExtractor()
-    # net = DINOv2_ViT_S14_Extractor()
-    # net = DINOv2_ViT_B14_Extractor()
-    # net = DINOv2_ViT_L14_Extractor()
-    # print(net)
     return net
 
 
@@ -234,7 +224,6 @@ class Resrecon(nn.Module):
         for decoder_blk in self.decoder:
             decoder_feature = decoder_blk(decoder_feature)
             out_feature.append(decoder_feature)
-        # out_feature.append(self.decoder[:17](decoder_feature))
         return out_feature
 
 class CLIP_res_FeatureExtractor(nn.Module):
@@ -453,7 +442,6 @@ class CLIP_L14_FeatureExtractor(nn.Module):
             outcome.append(up_blk(feature.float()))
         return outcome
 
-# 测试代码
 class Adapter(nn.Module):
     def __init__(self, in_channels, bottleneck_channels):
         super(Adapter, self).__init__()
@@ -470,7 +458,7 @@ class DINO_res_FeatureExtractor(nn.Module):
         # 构建 ResNet50 主干
         backbone = resnet50(pretrained=False)
 
-        # ❗ 修改点：单独拆分 stem 各层，保持和预训练 checkpoint 的 key 完全一致
+        # Apply separate stem layers to match pretrained checkpoint keys.
         self.conv1 = backbone.conv1
         self.bn1 = backbone.bn1
         self.relu = backbone.relu
@@ -481,19 +469,19 @@ class DINO_res_FeatureExtractor(nn.Module):
         self.layer3 = backbone.layer3
         self.layer4 = backbone.layer4
         print(backbone)
-        # ✅ 加载 checkpoint（key 正常匹配）
+        # Load the pretrained checkpoint.
         if pretrained_path is not None:
             state_dict = torch.load(pretrained_path, map_location="cuda")
             msg = self.load_state_dict(state_dict, strict=False)
             print("✅ DINO ResNet weights loaded:\n", msg)
 
-        # ✅ 冻结参数
+        # Freeze backbone parameters.
         if freeze:
             for p in self.parameters():
                 p.requires_grad = False
             print("✅ Parameters frozen.")
 
-        # 保留你已有的上采样模块
+        # Upsample backbone features.
         self.up_blocks = nn.ModuleList([
             nn.Sequential(
                 nn.Upsample(size=(128, 128), mode='bilinear', align_corners=False),
@@ -527,7 +515,7 @@ class DINO_res_FeatureExtractor(nn.Module):
 
         feat_maps = []
 
-        # ❗ 修改点：分步执行 stem
+        # Apply separate stem layers to match pretrained checkpoint keys.
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -697,7 +685,6 @@ class DINO_ViT_B16_FeatureExtractor(nn.Module):
         outcome = []
         for feature, up_blk in zip(feats_selected, self.up_blocks):
             outcome.append(up_blk(feature.float()))
-        # x = self.norm(x)
         return outcome
 
 def remap_flat_to_nested(state_dict):
@@ -768,8 +755,6 @@ class DINOv2_ViT_S14_Extractor(nn.Module):
             x = blk(x)
             features.append(x.clone())
 
-        # x = self.model.norm(x)
-        # return features  # 每层 [B, 1370, 768]
         outcome = []
         feats_selected = [features[i][:, 1:, :].permute(0, 2, 1).reshape((x.shape[0], x.shape[2], 37, 37)) for i in
                           [0, 2, 5, 7, 10]]
@@ -781,10 +766,10 @@ class DINOv2_ViT_B14_Extractor(nn.Module):
     def __init__(self, pretrained_path=None, img_size=518, freeze=True):
         super().__init__()
 
-        # ✅ 创建官方默认结构的 DINOv2 ViT-B/14
+        # Build the default DINOv2 ViT-B/14 architecture.
         self.model = vit_base(num_register_tokens=0, patch_size=14, img_size=img_size, init_values=0.1)
 
-        # ✅ 加载本地 checkpoint（扁平 key → 嵌套 key）
+        # Load the pretrained checkpoint.
         if pretrained_path is not None:
             print(f"Loading checkpoint from {pretrained_path}")
             state_dict = torch.load(pretrained_path, map_location="cuda")
@@ -837,8 +822,6 @@ class DINOv2_ViT_B14_Extractor(nn.Module):
             x = blk(x)
             features.append(x.clone())
 
-        # x = self.model.norm(x)
-        # return features  # 每层 [B, 1370, 768]
         outcome = []
         feats_selected = [features[i][:, 1:, :].permute(0, 2, 1).reshape((x.shape[0], x.shape[2], 37, 37)) for i in [0, 2, 5, 7, 10]]
         for feature, up_blk in zip(feats_selected, self.up_blocks):
@@ -851,7 +834,7 @@ class DINOv2_ViT_L14_Extractor(nn.Module):
 
         self.model = vit_large(num_register_tokens=0, patch_size=14, img_size=img_size, init_values=0.1)
 
-        # ✅ 加载本地 checkpoint（扁平 key → 嵌套 key）
+        # Load the pretrained checkpoint.
         if pretrained_path is not None:
             print(f"Loading checkpoint from {pretrained_path}")
             state_dict = torch.load(pretrained_path, map_location="cuda")
@@ -904,8 +887,6 @@ class DINOv2_ViT_L14_Extractor(nn.Module):
             x = blk(x)
             features.append(x.clone())
 
-        # x = self.model.norm(x)
-        # return features  # 每层 [B, 1370, 768]
         outcome = []
         feats_selected = [features[i][:, 1:, :].permute(0, 2, 1).reshape((x.shape[0], x.shape[2], 37, 37)) for i in
                           [0, 5, 10, 15, 20]]
@@ -993,12 +974,6 @@ class Para_GAN(nn.Module):
                 nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2, padding=1, bias=use_bias),
                           nn.Tanh())
         ])
-        # G_checkpoints = torch.load(pretrained_weights_path,map_location=lambda storage, loc: storage)
-        # decoder_weight = {}
-        # for key, value in G_checkpoints.items():
-        #     if 'decoder' in key:
-        #         decoder_weight[key] = value
-        # self.decoder.load_state_dict(decoder_weight, strict=False)
 
     def forward(self, input):
         encoder_feature = []
@@ -1007,7 +982,6 @@ class Para_GAN(nn.Module):
         for block in self.encoder:
             feature = block(feature)
             encoder_feature.append(feature)
-        # out_feature.append(encoder_feature[-1]) #
         decoder_feature = self.resnet_part(encoder_feature[-1])
         out_feature.append(decoder_feature)  #
         i = 0
@@ -1019,7 +993,6 @@ class Para_GAN(nn.Module):
             i += 1
             if i == 5:
                 break
-        # decoder_feature = torch.cat([decoder_feature, encoder_feature[0]], 1)
         out_feature.append(self.decoder[5](decoder_feature))
         return out_feature
 
@@ -1363,13 +1336,3 @@ class Vgg(torch.nn.Module):
         h_relu5 = self.slice5(h_relu4)
         out = [h_relu1, h_relu2, h_relu3, h_relu4, h_relu5]
         return out
-
-# def main():
-#     # print(timm.list_models("*dinov2*"))
-#     model = DINOv2Extractor()
-#     print(model)
-#     x = torch.randn(1, 3, 256, 256)
-#     y = model(x)
-
-# if __name__ == '__main__':
-#     main()
