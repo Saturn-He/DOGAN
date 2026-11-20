@@ -132,7 +132,32 @@ We thank the authors for making their code publicly available.
 
 ## 🔗 Related Projects
 
-Explore our related work on SAR-to-optical image translation:
+Explore our related work on optical priors, colour control, and cross-tile consistency in SAR-to-optical image translation. Click an overview to view the full-size figure.
 
-- **[ColorS2O](https://github.com/Saturn-He/ColorS2O)** — Controllable SAR-to-optical image translation with sparse colour anchors.
-- **[XTile-S2O](https://github.com/Saturn-He/XTile-S2O)** — Cross-tile coherent SAR-to-optical image translation for full-scene mapping.
+### [ColorS2O](https://github.com/Saturn-He/ColorS2O)
+
+**Controllable SAR-to-Optical Image Translation with Sparse Colour Anchors**
+
+<p>
+  <a href="https://github.com/Saturn-He/ColorS2O/blob/main/assets/framework.png">
+    <img src="https://raw.githubusercontent.com/Saturn-He/ColorS2O/main/assets/framework.png" width="360" alt="ColorS2O framework overview">
+  </a>
+</p>
+
+ColorS2O uses sparse colour anchors from an optical observation to guide the colours of SAR-to-optical translation. Mask-Guided Sparse Embedding (MGSE) encodes these anchors, and gated cross-attention injects them into the transformer. A time-epoch curriculum coordinates chromatic and perceptual supervision; the repository includes anchor sampling, training, and inference.
+
+[Explore ColorS2O →](https://github.com/Saturn-He/ColorS2O)
+
+### [XTile-S2O](https://github.com/Saturn-He/XTile-S2O)
+
+**Cross-Tile Coherent Full-Scene SAR-to-Optical Image Translation**
+
+<p>
+  <a href="https://github.com/Saturn-He/XTile-S2O/blob/main/assets/figures/overview.png">
+    <img src="https://raw.githubusercontent.com/Saturn-He/XTile-S2O/main/assets/figures/overview.png" width="360" alt="XTile-S2O framework overview">
+  </a>
+</p>
+
+XTile-S2O addresses consistency across tile boundaries when translating large SAR scenes. Cross-patch attention shares context among neighbouring tiles, while block-reassembly and overlap losses supervise cross-tile agreement. The repository provides training and inference code, dataset manifests, and evaluation tools for both image fidelity and full-scene coherence.
+
+[Explore XTile-S2O →](https://github.com/Saturn-He/XTile-S2O)
