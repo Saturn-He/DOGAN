@@ -130,13 +130,3 @@ The implementation builds on [Parallel-GAN](https://doi.org/10.1109/TGRS.2022.32
 
 We thank the authors for making their code publicly available.
 
-## 🤝 Contributors
-
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/Saturn-He"><img src="https://avatars.githubusercontent.com/u/112156349?v=4&s=160" width="80" alt="Saturn-He"><br><sub><b>Saturn-He</b></sub></a></td>
-    <td align="center"><a href="https://github.com/AproZC"><img src="https://avatars.githubusercontent.com/u/108963086?v=4&s=160" width="80" alt="AproZC"><br><sub><b>AproZC</b></sub></a></td>
-    <td align="center"><a href="https://github.com/SDD2021-car"><img src="https://avatars.githubusercontent.com/u/78991228?v=4&s=160" width="80" alt="SDD2021-car"><br><sub><b>SDD2021-car</b></sub></a></td>
-  </tr>
-</table>
-
