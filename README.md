@@ -130,3 +130,9 @@ The implementation builds on [Parallel-GAN](https://doi.org/10.1109/TGRS.2022.32
 
 We thank the authors for making their code publicly available.
 
+## 🔗 Related Projects
+
+Explore our related work on SAR-to-optical image translation:
+
+- **[ColorS2O](https://github.com/Saturn-He/ColorS2O)** — Controllable SAR-to-optical image translation with sparse colour anchors.
+- **[XTile-S2O](https://github.com/Saturn-He/XTile-S2O)** — Cross-tile coherent SAR-to-optical image translation for full-scene mapping.
