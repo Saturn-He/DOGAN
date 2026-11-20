@@ -146,8 +146,6 @@ Explore our related work on optical priors, colour control, and cross-tile consi
 
 ColorS2O uses sparse colour anchors from an optical observation to guide the colours of SAR-to-optical translation. Mask-Guided Sparse Embedding (MGSE) encodes these anchors, and gated cross-attention injects them into the transformer. A time-epoch curriculum coordinates chromatic and perceptual supervision; the repository includes anchor sampling, training, and inference.
 
-[Explore ColorS2O →](https://github.com/Saturn-He/ColorS2O)
-
 ### [XTile-S2O](https://github.com/Saturn-He/XTile-S2O)
 
 **Cross-Tile Coherent Full-Scene SAR-to-Optical Image Translation**
@@ -159,5 +157,3 @@ ColorS2O uses sparse colour anchors from an optical observation to guide the col
 </p>
 
 XTile-S2O addresses consistency across tile boundaries when translating large SAR scenes. Cross-patch attention shares context among neighbouring tiles, while block-reassembly and overlap losses supervise cross-tile agreement. The repository provides training and inference code, dataset manifests, and evaluation tools for both image fidelity and full-scene coherence.
-
-[Explore XTile-S2O →](https://github.com/Saturn-He/XTile-S2O)
