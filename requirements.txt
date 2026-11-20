@@ -1,0 +1,16 @@
+torch==2.1.0
+torchvision==0.16.0
+numpy==1.24.4
+scipy==1.9.1
+Pillow==10.4.0
+scikit-image==0.20.0
+scikit-learn
+opencv-python<4.12
+matplotlib
+timm
+dominate
+visdom
+lpips==0.1.4
+pyssim==0.7
+image-similarity-measures==0.3.6
+clip @ git+https://github.com/openai/CLIP.git

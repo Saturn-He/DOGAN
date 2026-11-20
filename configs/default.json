@@ -1,0 +1,45 @@
+{
+  "common": {
+    "dataroot": "datasets/paired",
+    "name": "DOGAN",
+    "checkpoints_dir": "checkpoints",
+    "dino_checkpoint": "pretrained_dino/dino_deitsmall16_pretrain.pth",
+    "net": "translation",
+    "model": "parallel_gan",
+    "dataset_mode": "aligned",
+    "direction": "AtoB",
+    "pair_by_name": true,
+    "input_nc": 3,
+    "output_nc": 3,
+    "gpu_ids": "0",
+    "batch_size": 1,
+    "crop_size": 256,
+    "preprocess": "resize_and_crop"
+  },
+  "train": {
+    "phase": "train",
+    "load_size": 286,
+    "num_threads": 4,
+    "epoch_count": 1,
+    "n_epochs": 100,
+    "n_epochs_decay": 100,
+    "lr": 0.0002,
+    "beta1": 0.5,
+    "lr_policy": "linear",
+    "lambda_L1": 100.0,
+    "save_epoch_freq": 20,
+    "save_latest_freq": 5000,
+    "print_freq": 100
+  },
+  "test": {
+    "phase": "test",
+    "load_size": 256,
+    "num_threads": 0,
+    "batch_size": 1,
+    "no_flip": true,
+    "serial_batches": true,
+    "eval": true,
+    "epoch": "200",
+    "results_dir": "results"
+  }
+}
