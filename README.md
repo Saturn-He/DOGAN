@@ -130,7 +130,7 @@ The implementation builds on [Parallel-GAN](https://doi.org/10.1109/TGRS.2022.32
 
 We thank the authors for making their code publicly available.
 
-## 🔗 Related Projects
+## 🔗 Our Related Projects
 
 Explore our related work on optical priors, colour control, and cross-tile consistency in SAR-to-optical image translation. Click an overview to view the full-size figure.
 
