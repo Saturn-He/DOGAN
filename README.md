@@ -157,3 +157,9 @@ ColorS2O uses sparse colour anchors from an optical observation to guide the col
 </p>
 
 XTile-S2O addresses consistency across tile boundaries when translating large SAR scenes. Cross-patch attention shares context among neighbouring tiles, while block-reassembly and overlap losses supervise cross-tile agreement. The repository provides training and inference code, dataset manifests, and evaluation tools for both image fidelity and full-scene coherence.
+
+### [SADBM](https://github.com/AproZC/SADBM)
+
+**Structure-Aware Diffusion Bridge Model for SAR-to-Optical Image Translation**
+
+SADBM uses an edge-enhanced SAR image as the starting point of a diffusion bridge to preserve scene structure in SAR-to-optical image translation.
